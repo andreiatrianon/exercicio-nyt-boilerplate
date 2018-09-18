@@ -1,6 +1,9 @@
+$(document).ready(() => {  
+  const btnBusca = document.getElementById('btn-busca');
+  btnBusca.addEventListener('click', trazBusca);
+}); 
+
 const myKey = data['myAPIkey'];
-const btnBusca = document.getElementById('btn-busca');
-btnBusca.addEventListener('click', trazBusca);
 let docs = [];
 
 function buscaPalavra() {
@@ -13,17 +16,19 @@ function erro() {
 
 function trazBusca(event) {
   event.preventDefault();
-  const pegarNoticia = new XMLHttpRequest();
-  pegarNoticia.open('GET', `
-  http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${buscaPalavra()}&api-key=${myKey}
-  `);
-  pegarNoticia.onload = carregarPosts;
-  pegarNoticia.onerror = erro;
-  pegarNoticia.send();
+  const url =
+  `http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${buscaPalavra()}&api-key=${myKey}`;
+  
+  $.ajax({
+    type: 'GET',
+    url,
+    success: carregarPosts,
+    error: erro
+  })
 }
 
-function carregarPosts() {
-  docs = JSON.parse(this.responseText)['response']['docs'];
+function carregarPosts(data) {
+  docs = data.response.docs;
   exibePosts();
 }
 
